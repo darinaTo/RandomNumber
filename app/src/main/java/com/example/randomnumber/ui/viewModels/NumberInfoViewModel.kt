@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -21,9 +22,14 @@ class NumberInfoViewModel  @Inject constructor(
 
 
 
-      fun getNumberInfo(number : Int) {
-         numberInfoImpl.fetchNewRandomQuote(number).onEach { info ->
-             _uiState.update { it.copy(info = info.getOrThrow()) }
-         }.launchIn(viewModelScope)
+       fun getNumberInfo(number : Int) {
+           viewModelScope.launch {
+               numberInfoImpl.fetchNewRandomQuote(number).onEach { data ->
+                   _uiState.update { it.copy(number = data.number, info = data.info) }
+               }.launchIn(viewModelScope)
+           }
      }
+    fun updateText(number: String) {
+        _uiState.update { it.copy(number = number) }
+    }
 }

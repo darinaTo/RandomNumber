@@ -2,6 +2,7 @@ package com.example.randomnumber.di
 
 import com.example.randomnumber.data.constants.Constants
 import com.example.randomnumber.data.service.remote.NumberApi
+import com.example.randomnumber.data.service.remote.NumberRemoteDataSource
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -22,5 +23,8 @@ object NetworkModule {
             .build()
             .create(NumberApi::class.java)
 
-
+    @Singleton
+    @Provides
+    fun provideNumberRemoteDataSource(numberApi: NumberApi): NumberRemoteDataSource =
+        NumberRemoteDataSource(numberApi)
 }
