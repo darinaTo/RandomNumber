@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class NumberInfoImpl @Inject constructor(
@@ -25,16 +26,17 @@ class NumberInfoImpl @Inject constructor(
         replay = 1, onBufferOverflow = BufferOverflow.DROP_LATEST
     )
     val errorFlow = _errorFlow.asSharedFlow()
-    override fun getRandomQuotes(): Flow<Int> {
-        TODO("Not yet implemented")
-    }
+    override fun getRandomQuotes(): Flow<List<NumberUIEntity>> =
+        numberLocalDataSource.getNumber().map { data ->
+            data.map { it.toUiEntity() }
+        }
 
-    override suspend fun fetchNewRandomQuote(number : Int): Flow<NumberUIEntity> =
+    override suspend fun fetchNewRandomQuote(number: String): Flow<NumberUIEntity> =
         flow {
             runCatching {
-                 numberRemoteDataSource.fetchNumberInfo(number)
+                numberRemoteDataSource.fetchNumberInfo(number)
             }.onSuccess { data ->
-                val entity = data.getOrThrow().toApiEntity(number.toString())
+                val entity = data.getOrThrow().toApiEntity(number)
                 numberLocalDataSource.insertNumber(entity.toNumberEntity())
                 emit(entity.toUiEntity())
             }.onFailure { exception ->
@@ -42,4 +44,4 @@ class NumberInfoImpl @Inject constructor(
             }
 
         }.flowOn(Dispatchers.IO)
-    }
+}

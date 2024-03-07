@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface NumberDao {
     @Query("SELECT * FROM number")
-    fun getAllNumber(): Flow<List<NumberDbEntity>>
+    fun getNumber(): Flow<List<NumberDbEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertNumber(numberEntity: NumberDbEntity)

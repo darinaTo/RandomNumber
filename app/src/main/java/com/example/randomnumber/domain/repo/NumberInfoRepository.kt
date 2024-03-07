@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface NumberInfoRepository {
 
-    fun getRandomQuotes(): Flow<Int>
+    fun getRandomQuotes(): Flow<List<NumberUIEntity>>
 
-     suspend fun fetchNewRandomQuote(number : Int): Flow<NumberUIEntity>
+     suspend fun fetchNewRandomQuote(number : String): Flow<NumberUIEntity>
 }

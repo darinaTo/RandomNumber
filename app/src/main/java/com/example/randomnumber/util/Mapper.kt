@@ -24,3 +24,10 @@ fun NumberApiEntity.toUiEntity() : NumberUIEntity {
         info = this.info
     )
 }
+
+fun NumberDbEntity.toUiEntity() : NumberUIEntity {
+    return NumberUIEntity(
+        number = this.number,
+        info = this.info
+    )
+}

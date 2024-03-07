@@ -14,22 +14,27 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class NumberInfoViewModel  @Inject constructor(
+class NumberInfoViewModel @Inject constructor(
     private val numberInfoImpl: NumberInfoImpl
-) : ViewModel(){
-    private val _uiState =  MutableStateFlow(UiState())
+) : ViewModel() {
+    private val _uiState = MutableStateFlow(UiState())
     val uiState = _uiState.asStateFlow()
 
+    init {
+        getNumberInfo()
+    }
+    fun getNumberInfo() {
+        numberInfoImpl.getRandomQuotes()
+            .onEach { dataNumber ->
+                if (dataNumber.isNotEmpty()) {
+                    _uiState.update { it.copy(entity = dataNumber, number = (dataNumber.size - 1).toString()) }
+                }
+            }.launchIn(viewModelScope)
+    }
 
-
-       fun getNumberInfo(number : Int) {
-           viewModelScope.launch {
-               numberInfoImpl.fetchNewRandomQuote(number).onEach { data ->
-                   _uiState.update { it.copy(number = data.number, info = data.info) }
-               }.launchIn(viewModelScope)
-           }
-     }
-    fun updateText(number: String) {
-        _uiState.update { it.copy(number = number) }
+     fun fetchNumber(number: String) {
+        viewModelScope.launch {
+            numberInfoImpl.fetchNewRandomQuote(number).launchIn(viewModelScope)
+        }
     }
 }
