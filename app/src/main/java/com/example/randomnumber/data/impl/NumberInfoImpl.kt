@@ -26,17 +26,17 @@ class NumberInfoImpl @Inject constructor(
         replay = 1, onBufferOverflow = BufferOverflow.DROP_LATEST
     )
     val errorFlow = _errorFlow.asSharedFlow()
-    override fun getRandomQuotes(): Flow<List<NumberUIEntity>> =
+    override fun getNumber(): Flow<List<NumberUIEntity>> =
         numberLocalDataSource.getNumber().map { data ->
             data.map { it.toUiEntity() }
         }
 
-    override suspend fun fetchNewRandomQuote(number: String): Flow<NumberUIEntity> =
+    override suspend fun fetchNumber(number: String): Flow<NumberUIEntity> =
         flow {
             runCatching {
                 numberRemoteDataSource.fetchNumberInfo(number)
             }.onSuccess { data ->
-                val entity = data.getOrThrow().toApiEntity(number)
+                val entity = data.getOrThrow().toApiEntity()
                 numberLocalDataSource.insertNumber(entity.toNumberEntity())
                 emit(entity.toUiEntity())
             }.onFailure { exception ->
@@ -44,4 +44,16 @@ class NumberInfoImpl @Inject constructor(
             }
 
         }.flowOn(Dispatchers.IO)
+
+    override suspend fun fetchRandomNumber(): Flow<String> = flow {
+       runCatching {
+            numberRemoteDataSource.fetchRandomNumber()
+       }.onSuccess { data ->
+           val entity = data.getOrThrow().toApiEntity()
+           numberLocalDataSource.insertNumber(entity.toNumberEntity())
+           emit(data.getOrThrow())
+       }.onFailure { exception ->
+           _errorFlow.tryEmit(java.lang.Error(exception))
+       }
+    }.flowOn(Dispatchers.IO)
 }

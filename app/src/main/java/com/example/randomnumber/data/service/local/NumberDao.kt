@@ -14,4 +14,5 @@ interface NumberDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertNumber(numberEntity: NumberDbEntity)
+
 }

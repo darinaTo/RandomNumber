@@ -1,12 +1,19 @@
 package com.example.randomnumber.data.service.remote
 
+import java.io.IOException
 import javax.inject.Inject
 
 class NumberRemoteDataSource @Inject constructor(private val numberApi: NumberApi) {
 
     suspend fun fetchNumberInfo(number: String): Result<String> {
         val numberInfo = numberApi.getInfoNumber(number)
-        return Result.success(numberInfo)/*.body()?.first()?.let { Result.success(it.toString()) }
-            ?: Result.failure(IOException("Can't get data"))*/
+            return (numberInfo.body()?.let { Result.success(it) }
+                ?: Result.failure(IOException("No data received.")))
+    }
+
+    suspend fun fetchRandomNumber() : Result<String> {
+        val randomNumber = numberApi.getRandomNumber()
+        return (randomNumber.body()?.let { Result.success(it) }
+            ?: Result.failure(IOException("No data received.")))
     }
 }

@@ -23,8 +23,8 @@ class NumberInfoViewModel @Inject constructor(
     init {
         getNumberInfo()
     }
-    fun getNumberInfo() {
-        numberInfoImpl.getRandomQuotes()
+    private fun getNumberInfo() {
+        numberInfoImpl.getNumber()
             .onEach { dataNumber ->
                 if (dataNumber.isNotEmpty()) {
                     _uiState.update { it.copy(entity = dataNumber, number = (dataNumber.size - 1).toString()) }
@@ -34,7 +34,13 @@ class NumberInfoViewModel @Inject constructor(
 
      fun fetchNumber(number: String) {
         viewModelScope.launch {
-            numberInfoImpl.fetchNewRandomQuote(number).launchIn(viewModelScope)
+            numberInfoImpl.fetchNumber(number).launchIn(viewModelScope)
+        }
+    }
+
+    fun fetchRandomNumber() {
+        viewModelScope.launch {
+            numberInfoImpl.fetchRandomNumber().launchIn(viewModelScope)
         }
     }
 }

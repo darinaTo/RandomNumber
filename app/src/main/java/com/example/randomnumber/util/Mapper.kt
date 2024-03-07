@@ -11,10 +11,10 @@ fun NumberApiEntity.toNumberEntity() : NumberDbEntity {
     )
 }
 
-fun  String.toApiEntity(number : String) : NumberApiEntity {
+fun  String.toApiEntity() : NumberApiEntity {
     return NumberApiEntity(
-        number = number,
-        info = this
+        number = this.substringBefore(" "),
+        info = this.substringAfter(" ").trim()
     )
 }
 
