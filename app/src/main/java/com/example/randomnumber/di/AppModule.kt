@@ -1,6 +1,6 @@
 package com.example.randomnumber.di
 
-import com.example.randomnumber.data.impl.NumberInfoImpl
+import com.example.randomnumber.data.impl.NumberInfoRepositoryImpl
 import com.example.randomnumber.data.service.local.NumberLocalDataSource
 import com.example.randomnumber.data.service.remote.NumberRemoteDataSource
 import dagger.Module
@@ -17,6 +17,6 @@ object AppModule {
     fun provideNumberInfoImpl(
         numberRemoteDataSource: NumberRemoteDataSource,
         numberLocalDataSource: NumberLocalDataSource,
-    ): NumberInfoImpl =
-        NumberInfoImpl(numberRemoteDataSource, numberLocalDataSource)
+    ): NumberInfoRepositoryImpl =
+        NumberInfoRepositoryImpl(numberRemoteDataSource, numberLocalDataSource)
 }

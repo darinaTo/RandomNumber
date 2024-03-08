@@ -37,13 +37,13 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.randomnumber.domain.entities.NumberUIEntity
-import com.example.randomnumber.ui.viewModels.NumberInfoViewModel
+import com.example.randomnumber.ui.viewModels.NumberViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NumberInfoScreen(
     onInfoTap: (Int) -> Unit,
-    viewModel: NumberInfoViewModel = hiltViewModel()
+    viewModel: NumberViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     var text by remember { mutableStateOf("") }

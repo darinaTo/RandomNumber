@@ -10,7 +10,7 @@ import com.example.randomnumber.ui.viewModels.NumberInfoViewModel
 @Composable
 fun InfoScreen(viewModel: NumberInfoViewModel = hiltViewModel()) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    Text(text = viewModel.getInfoById(1).toString())
+    Text(text = uiState.currentInfo)
 
     
 }

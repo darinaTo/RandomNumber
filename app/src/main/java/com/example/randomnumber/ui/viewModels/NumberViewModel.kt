@@ -1,6 +1,5 @@
 package com.example.randomnumber.ui.viewModels
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.randomnumber.data.impl.NumberInfoRepositoryImpl
@@ -15,24 +14,33 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class NumberInfoViewModel @Inject constructor(
-    savedStateHandle: SavedStateHandle,
+class NumberViewModel @Inject constructor(
     private val numberInfoImpl: NumberInfoRepositoryImpl
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(UiState())
     val uiState = _uiState.asStateFlow()
-    private val id: Int
 
     init {
-        id = requireNotNull(savedStateHandle.get<Int>("id"))
-        getInfoById()
+        getNumberInfo()
+    }
+    private fun getNumberInfo() {
+        numberInfoImpl.getNumber()
+            .onEach { dataNumber ->
+                if (dataNumber.isNotEmpty()) {
+                    _uiState.update { it.copy(entity = dataNumber, number = (dataNumber.size - 1).toString()) }
+                }
+            }.launchIn(viewModelScope)
     }
 
-    fun getInfoById() {
+     fun fetchNumber(number: String) {
         viewModelScope.launch {
-            numberInfoImpl.getInfoById(id).onEach { info ->
-                _uiState.update { it.copy(currentInfo = info) }
-            }.launchIn(viewModelScope)
+            numberInfoImpl.fetchNumber(number).launchIn(viewModelScope)
+        }
+    }
+
+    fun fetchRandomNumber() {
+        viewModelScope.launch {
+            numberInfoImpl.fetchRandomNumber().launchIn(viewModelScope)
         }
     }
 }

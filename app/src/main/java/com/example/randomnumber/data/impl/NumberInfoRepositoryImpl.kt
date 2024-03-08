@@ -18,7 +18,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-class NumberInfoImpl @Inject constructor(
+class NumberInfoRepositoryImpl @Inject constructor(
     private val numberRemoteDataSource: NumberRemoteDataSource,
     private val numberLocalDataSource: NumberLocalDataSource
 ) : NumberInfoRepository {
