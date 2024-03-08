@@ -46,17 +46,22 @@ fun NumberInfoScreen(
     viewModel: NumberViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-
+    val message = uiState.errorMessage
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
-        NumberTop(
-            onInfoTap = onInfoTap,
-            fetchData = { viewModel.fetchRandomNumber() },
-            entity = uiState.entity
-        )
+        if (message.isNotEmpty()) {
+            ErrorDialog(message = message,
+                Modifier.align(Alignment.Center))
+        } else {
+            NumberTop(
+                onInfoTap = onInfoTap,
+                fetchData = { viewModel.fetchRandomNumber() },
+                entity = uiState.entity
+            )
+        }
     }
 }
 

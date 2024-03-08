@@ -5,4 +5,6 @@ object Constants {
     const val NUMBER_INFO_ROUTE = "number_info_screen"
     const val INFO_ROUTE = "info_screen"
     const val NUMBER_TABLE = "number"
+    const val ERROR_MESSAGE = "Some trouble with network connection"
+
 }

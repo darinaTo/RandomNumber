@@ -23,25 +23,26 @@ import com.example.randomnumber.ui.viewModels.NumberInfoViewModel
 @Composable
 fun InfoScreen(viewModel: NumberInfoViewModel = hiltViewModel()) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val message = uiState.errorMessage
     Box(
         modifier = Modifier
             .fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        Card(
-            modifier = Modifier
-                .padding(8.dp),
-            colors = CardDefaults.cardColors(
-                containerColor =Purple80
-            ),
-            shape = RoundedCornerShape(Dimensions.One)
-        ) {
-            Text(
-                text = uiState.currentInfo,
-                fontSize = 25.sp,
-                textAlign = TextAlign.Left,
-                modifier = Modifier.padding(8.dp)
-            )
-        }
+            Card(
+                modifier = Modifier
+                    .padding(8.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = Purple80
+                ),
+                shape = RoundedCornerShape(Dimensions.One)
+            ) {
+                Text(
+                    text = uiState.currentInfo,
+                    fontSize = 25.sp,
+                    textAlign = TextAlign.Left,
+                    modifier = Modifier.padding(8.dp)
+                )
+            }
     }
 }
