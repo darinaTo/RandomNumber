@@ -47,18 +47,22 @@ fun NumberInfoScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val message = uiState.errorMessage
+
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
         if (message.isNotEmpty()) {
-            ErrorDialog(message = message,
-                Modifier.align(Alignment.Center))
+            ErrorDialog(
+                message = message,
+                Modifier.align(Alignment.Center)
+            )
         } else {
             NumberTop(
                 onInfoTap = onInfoTap,
                 fetchData = { viewModel.fetchRandomNumber() },
+                fetchNumber = { number -> viewModel.fetchNumber(number) },
                 entity = uiState.entity
             )
         }
@@ -70,9 +74,8 @@ fun NumberInfoScreen(
 fun NumberTop(
     onInfoTap: (Int) -> Unit,
     fetchData: () -> Unit,
+    fetchNumber: (String) -> Unit,
     entity: List<NumberUIEntity>,
-    viewModel: NumberViewModel = hiltViewModel()
-
 ) {
     var text by remember { mutableStateOf("") }
 
@@ -99,7 +102,7 @@ fun NumberTop(
 
             Button(
                 onClick = {
-                    viewModel.fetchNumber(text)
+                    fetchNumber(text)
                 }, modifier = Modifier
                     .weight(1f)
                     .height(60.dp)
