@@ -43,4 +43,10 @@ class NumberInfoViewModel @Inject constructor(
             numberInfoImpl.fetchRandomNumber().launchIn(viewModelScope)
         }
     }
+
+    fun getInfoById(id : Int) {
+        viewModelScope.launch {
+            numberInfoImpl.getInfoById(id).launchIn(viewModelScope)
+        }
+    }
 }

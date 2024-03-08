@@ -5,7 +5,7 @@ import com.example.randomnumber.data.service.remote.NumberRemoteDataSource
 import com.example.randomnumber.domain.entities.NumberUIEntity
 import com.example.randomnumber.domain.repo.NumberInfoRepository
 import com.example.randomnumber.util.toApiEntity
-import com.example.randomnumber.util.toNumberEntity
+import com.example.randomnumber.util.toNumberDBEntity
 import com.example.randomnumber.util.toUiEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.BufferOverflow
@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class NumberInfoImpl @Inject constructor(
@@ -36,9 +37,10 @@ class NumberInfoImpl @Inject constructor(
             runCatching {
                 numberRemoteDataSource.fetchNumberInfo(number)
             }.onSuccess { data ->
-                val entity = data.getOrThrow().toApiEntity()
-                numberLocalDataSource.insertNumber(entity.toNumberEntity())
-                emit(entity.toUiEntity())
+                val apiEntity = data.getOrThrow().toApiEntity()
+                val dbEntity = apiEntity.toNumberDBEntity()
+                numberLocalDataSource.insertNumber(dbEntity)
+                emit(dbEntity.toUiEntity())
             }.onFailure { exception ->
                 _errorFlow.tryEmit(Error(exception))
             }
@@ -46,14 +48,21 @@ class NumberInfoImpl @Inject constructor(
         }.flowOn(Dispatchers.IO)
 
     override suspend fun fetchRandomNumber(): Flow<String> = flow {
-       runCatching {
+        runCatching {
             numberRemoteDataSource.fetchRandomNumber()
-       }.onSuccess { data ->
-           val entity = data.getOrThrow().toApiEntity()
-           numberLocalDataSource.insertNumber(entity.toNumberEntity())
-           emit(data.getOrThrow())
-       }.onFailure { exception ->
-           _errorFlow.tryEmit(java.lang.Error(exception))
-       }
+        }.onSuccess { data ->
+            val entity = data.getOrThrow().toApiEntity()
+            numberLocalDataSource.insertNumber(entity.toNumberDBEntity())
+            emit(data.getOrThrow())
+        }.onFailure { exception ->
+            _errorFlow.tryEmit(java.lang.Error(exception))
+        }
     }.flowOn(Dispatchers.IO)
+
+    suspend fun getInfoById(id: Int): Flow<String> {
+        return withContext(Dispatchers.IO) {
+            numberLocalDataSource.getInfoById(id)
+        }
+    }
+
 }

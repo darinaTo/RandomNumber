@@ -13,8 +13,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -27,7 +27,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.LightGray
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -42,13 +42,11 @@ import com.example.randomnumber.ui.viewModels.NumberInfoViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NumberInfoScreen(
+    onInfoTap: (Int) -> Unit,
     viewModel: NumberInfoViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     var text by remember { mutableStateOf("") }
-    var showRandomNumber by remember { mutableStateOf(false) }
-    var showNumberInfo by remember { mutableStateOf(false) }
-
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -68,7 +66,7 @@ fun NumberInfoScreen(
                     maxLines = 1,
                     modifier = Modifier
                         .weight(1f)
-                        .height(60.dp), // Set the weight to 1f
+                        .height(60.dp),
                     colors = TextFieldDefaults.outlinedTextFieldColors(
                         focusedBorderColor = LightGray, unfocusedBorderColor = LightGray
                     )
@@ -95,7 +93,10 @@ fun NumberInfoScreen(
                 }
             }
 
-            NumberInfo(list = uiState.entity)
+            NumberInfo(
+                list = uiState.entity,
+                onInfoTap = onInfoTap
+            )
 
         }
     }
@@ -103,11 +104,13 @@ fun NumberInfoScreen(
 
 @Composable
 fun NumberInfo(
-    list: List<NumberUIEntity>
+    list: List<NumberUIEntity>,
+    onInfoTap: (Int) -> Unit
 ) {
     val lazyListState = rememberLazyListState()
 //TODO:state holding
     LazyColumn(
+        reverseLayout = true,
         state = lazyListState,
         contentPadding = PaddingValues(horizontal = 12.dp),
         verticalArrangement = Arrangement.spacedBy(13.dp),
@@ -115,13 +118,16 @@ fun NumberInfo(
 
     ) {
         items(list) { entity ->
-            NumberCard(entity = entity)
+            NumberCard(
+                entity = entity,
+                onInfoTap = onInfoTap
+            )
         }
     }
 }
 
 @Composable
-fun NumberCard(entity: NumberUIEntity) {
+fun NumberCard(entity: NumberUIEntity, onInfoTap: (Int) -> Unit) {
     Row(
         modifier = Modifier
             .padding(horizontal = 4.dp)
@@ -136,22 +142,21 @@ fun NumberCard(entity: NumberUIEntity) {
             modifier = Modifier.weight(0.17f),
             textAlign = TextAlign.Center
         )
-        Box(
-            contentAlignment = Alignment.Center,
+        Button(
             modifier = Modifier
-                .clip(CircleShape)
-                .weight(1f)
-                .background(LightGray)
-        ) {
+                .padding(horizontal = 6.dp)
+                .weight(1f),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color.LightGray,
+                contentColor = Color.White),
+            onClick = { onInfoTap(entity.id) }) {
             Text(
                 text = entity.info,
                 fontSize = 20.sp,
                 textAlign = TextAlign.Center,
-                modifier = Modifier.padding(horizontal = 6.dp),
                 maxLines = 1,
                 overflow = TextOverflow.Clip
             )
         }
     }
-
 }

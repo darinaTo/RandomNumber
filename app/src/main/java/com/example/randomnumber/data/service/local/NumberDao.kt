@@ -12,7 +12,8 @@ interface NumberDao {
     @Query("SELECT * FROM number")
     fun getNumber(): Flow<List<NumberDbEntity>>
 
+    @Query("SELECT info FROM NUMBER WHERE id =:id")
+    fun getInfoById(id : Int) : Flow<String>
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertNumber(numberEntity: NumberDbEntity)
-
 }

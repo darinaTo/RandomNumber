@@ -4,7 +4,7 @@ import com.example.randomnumber.domain.entities.NumberUIEntity
 import com.example.randomnumber.domain.entities.dbEntities.NumberDbEntity
 import com.example.randomnumber.domain.entities.network.NumberApiEntity
 
-fun NumberApiEntity.toNumberEntity() : NumberDbEntity {
+fun NumberApiEntity.toNumberDBEntity() : NumberDbEntity {
     return NumberDbEntity(
         number = this.number,
         info = this.info
@@ -18,16 +18,11 @@ fun  String.toApiEntity() : NumberApiEntity {
     )
 }
 
-fun NumberApiEntity.toUiEntity() : NumberUIEntity {
-    return NumberUIEntity(
-        number = this.number,
-        info = this.info
-    )
-}
 
 fun NumberDbEntity.toUiEntity() : NumberUIEntity {
     return NumberUIEntity(
         number = this.number,
-        info = this.info
+        info = this.info,
+        id = this.id
     )
 }

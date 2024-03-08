@@ -6,12 +6,10 @@ import javax.inject.Inject
 class NumberLocalDataSource @Inject constructor(
     private val numberDao: NumberDao
 ) {
-     fun insertNumber(numberEntity: NumberDbEntity) {
+     fun insertNumber(numberEntity: NumberDbEntity) =
             numberDao.insertNumber(numberEntity)
-
-    }
 
     fun getNumber() = numberDao.getNumber()
 
-
+    fun getInfoById(id : Int) = numberDao.getInfoById(id)
 }
