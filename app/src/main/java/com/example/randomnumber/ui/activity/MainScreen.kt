@@ -38,67 +38,85 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.randomnumber.domain.entities.NumberUIEntity
 import com.example.randomnumber.ui.viewModels.NumberViewModel
+import com.example.randomnumber.util.isValidText
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NumberInfoScreen(
     onInfoTap: (Int) -> Unit,
     viewModel: NumberViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    var text by remember { mutableStateOf("") }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
-        Column {
-            Row(
-                modifier = Modifier.padding(vertical = 12.dp, horizontal = 12.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                OutlinedTextField(
-                    value = text,
-                    onValueChange = { newText ->
-                        text = newText
-                    },
-                    maxLines = 1,
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(60.dp),
-                    colors = TextFieldDefaults.outlinedTextFieldColors(
-                        focusedBorderColor = LightGray, unfocusedBorderColor = LightGray
-                    )
-                )
+        NumberTop(
+            onInfoTap = onInfoTap,
+            fetchData = { viewModel.fetchRandomNumber() },
+            entity = uiState.entity
+        )
+    }
+}
 
-                //TODO: create method to pass value
-                Button(
-                    onClick = {
-                        viewModel.fetchNumber(text)
-                    }, modifier = Modifier
-                        .weight(1f)
-                        .height(60.dp)
-                ) {
-                    Text(text = "Get fact")
-                }
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun NumberTop(
+    onInfoTap: (Int) -> Unit,
+    fetchData: () -> Unit,
+    entity: List<NumberUIEntity>,
+    viewModel: NumberViewModel = hiltViewModel()
 
-                Button(
-                    onClick = { viewModel.fetchRandomNumber() },
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(60.dp)
-                ) {
-                    Text(text = "Get random number")
-                }
-            }
+) {
+    var text by remember { mutableStateOf("") }
 
-            NumberInfo(
-                list = uiState.entity,
-                onInfoTap = onInfoTap
+    Column {
+        Row(
+            modifier = Modifier.padding(vertical = 12.dp, horizontal = 12.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            OutlinedTextField(
+                value = text,
+                onValueChange = { newText ->
+                    text = newText
+                },
+                maxLines = 1,
+                modifier = Modifier
+                    .weight(1f)
+                    .height(60.dp),
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    focusedBorderColor = LightGray, unfocusedBorderColor = LightGray
+                ),
+                isError = !isValidText(text)
             )
 
+            Button(
+                onClick = {
+                    viewModel.fetchNumber(text)
+                }, modifier = Modifier
+                    .weight(1f)
+                    .height(60.dp)
+            ) {
+                Text(text = "Get fact")
+            }
+
+            Button(
+                onClick = { fetchData() },
+                modifier = Modifier
+                    .weight(1f)
+                    .height(60.dp)
+            ) {
+                Text(text = "Get random number")
+            }
         }
+
+        NumberInfo(
+            list = entity,
+            onInfoTap = onInfoTap
+        )
+
     }
 }
 
@@ -147,8 +165,9 @@ fun NumberCard(entity: NumberUIEntity, onInfoTap: (Int) -> Unit) {
                 .padding(horizontal = 6.dp)
                 .weight(1f),
             colors = ButtonDefaults.buttonColors(
-                containerColor = Color.LightGray,
-                contentColor = Color.White),
+                containerColor = LightGray,
+                contentColor = Color.White
+            ),
             onClick = { onInfoTap(entity.id) }) {
             Text(
                 text = entity.info,

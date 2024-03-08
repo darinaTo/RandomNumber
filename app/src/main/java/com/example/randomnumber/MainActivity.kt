@@ -8,6 +8,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.randomnumber.data.constants.Constants.INFO_ROUTE
+import com.example.randomnumber.data.constants.Constants.NUMBER_INFO_ROUTE
 import com.example.randomnumber.ui.activity.InfoScreen
 import com.example.randomnumber.ui.activity.NumberInfoScreen
 import com.example.randomnumber.ui.theme.RandomNumberTheme
@@ -20,14 +22,14 @@ class MainActivity : ComponentActivity() {
         setContent {
             RandomNumberTheme {
                 val navController = rememberNavController()
-                NavHost(navController = navController, startDestination = "number_info_screen") {
-                    composable("number_info_screen") {
+                NavHost(navController = navController, startDestination = NUMBER_INFO_ROUTE) {
+                    composable(NUMBER_INFO_ROUTE) {
                         NumberInfoScreen(onInfoTap = { id ->
-                            navController.navigate("info_screen/${id}")
+                            navController.navigate("$INFO_ROUTE/${id}")
                         }
                         )
                     }
-                    composable("info_screen/{id}",
+                    composable("$INFO_ROUTE/{id}",
                         arguments = listOf(
                             navArgument("id") {
                                 type = NavType.IntType
