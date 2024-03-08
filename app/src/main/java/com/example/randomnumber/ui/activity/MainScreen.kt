@@ -103,6 +103,7 @@ fun NumberTop(
             Button(
                 onClick = {
                     fetchNumber(text)
+                    text = ""
                 }, modifier = Modifier
                     .weight(1f)
                     .height(60.dp)
@@ -111,7 +112,8 @@ fun NumberTop(
             }
 
             Button(
-                onClick = { fetchData() },
+                onClick = { fetchData()
+                    text = ""},
                 modifier = Modifier
                     .weight(1f)
                     .height(60.dp)
